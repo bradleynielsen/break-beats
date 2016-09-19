@@ -20,8 +20,7 @@ $('#searchButton').on('click', function() {
 				var responseid = response[i].id;
 				var resultDiv = $('<div id="response'+responseid+'">');
 				var pArtist = "Artist: "+response[i].artist;
-				var pTitle = "Title: "+response[i].title;
-                
+				var pTitle = "Title: "+response[i].title;                
                 var artworkImage = $('<img>');
                 var link = response[i].permalink_url;
                 var aLink = $('<a href="'+link+'"> target="_blank"');

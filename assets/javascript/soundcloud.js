@@ -15,19 +15,21 @@ $('#searchButton').on('click', function() {
      	.done(function(response) {
 		
 	        for (var i = 0; i < response.length; i++) {
-				console.log("response" +i);
-				console.log(response[i].id);
+				console.log("artist" +i);
+				console.log(response[i].artist);
 				var responseid = response[i].id;
 				var resultDiv = $('<div id="response'+responseid+'">');
 				var pArtist = "Artist: "+response[i].artist;
 				var pTitle = "Title: "+response[i].title;
+                
                 var artworkImage = $('<img>');
+                var link = response[i].permalink_url;
+                var aLink = $('<a href="'+link+'"> target="_blank"');
                 artworkImage.attr('src', response[i].artwork_url);
-
+				aLink.append(artworkImage);
 				resultDiv.append(pArtist).append('<br />');
 				resultDiv.append(pTitle).append('<br />');
-				resultDiv.append(artworkImage)
-
+				resultDiv.append(aLink);
                 $('#results').prepend(resultDiv);
 	        }	  		
    		});

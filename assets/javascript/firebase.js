@@ -1,6 +1,13 @@
+    $(document).on('click', '.playerWrapper', function() {
+      var selectedVideoId = $(this).attr('data-id');
+      var selectedVideoImg = $(this).attr('data-img');
+      var selectedVideoChecked = $(this).attr('data-checked');
+
+
 $(document).ready(function() {
 
-  // Initialize Firebase
+// Initialize APIs
+  //Firebase
   var config = {
     apiKey: "AIzaSyAauOC4PC5WrE3Br4Ff1-HkA-FxBmh1QfQ",
     authDomain: "breakbeats-4758a.firebaseapp.com",
@@ -15,15 +22,18 @@ $(document).ready(function() {
         emailjs.init("user_xrCuLVJF1XPydVeSaCraO");
      })();
 
-  // Global vars
+// Global vars
   var playlistName;
   var selectedVideoCounter = 0;
+  var playlistArray = [];
+
 
   $('#search').on('click', function() {
     var searchTerm = $('#searchField').val().trim();
     var qUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&order=viewCount&q="+searchTerm+"&type=video&key=AIzaSyDIE0dd7hZ5j4vQRtwrU0CwQLGq-lhXWCc"
 
 
+//YouTube
     $.ajax({
       url: qUrl,
       method: 'GET'
@@ -37,6 +47,8 @@ $(document).ready(function() {
           $(wrapperDiv).addClass('playerWrapper');
           $(wrapperDiv).attr('data-id', videoId);
           $(wrapperDiv).attr('data-img', defaultImg);
+          $(wrapperDiv).attr('data-checked', false);
+          $(wrapperDiv).addClass('.searchResult', false);
           $('<iframe />');
           $('<iframe />', {
             id: 'video1',
@@ -46,56 +58,75 @@ $(document).ready(function() {
             frameborder: '0',
           }).appendTo(wrapperDiv);
           $('.results').append(wrapperDiv);
-
         }
     })
+  });
 
-    $('#submit').on('click', function() {
-      playlistName = $('#playlistName').val().trim();
-    })
 
-    $(document).on('click', '.playerWrapper', function() {
-      $(this).css('border', 'solid 2px green');
-      var selectedVideoId = $(this).attr('data-id');
-      var selectedVideoImg = $(this).attr('data-img');
-      console.log(selectedVideoId);
-      firebase.database().ref('/playlists/'+playlistName+'/'+selectedVideoCounter).update({
-        videoId: selectedVideoId,
-        defaultImg: selectedVideoImg
-      });
-      selectedVideoCounter++
-    })
-  })
 
-  $('#send').click(function() {
-    firebase.database().ref('/playlists/'+playlistName)
-    .once('value').then(function(snapshot) {
-      var src1 = snapshot.child('0').child('defaultImg').val();
-      var src2 = snapshot.child('1').child('defaultImg').val();
-      var src3 = snapshot.child('2').child('defaultImg').val();
+  //Select to add to slot
+    ('.searchResult').on('click', function() {
+      if (selectedVideoChecked === false){
+        $(this).css('border', 'solid 2px green');
+        add selected video variable to track slot
+        console.log(selectedVideoId);
+        selectedVideoChecked = true;
+      } else {
+        selectedVideoChecked = false;
+      }
 
-      var videoId1 = snapshot.child('0').child('videoId').val();
-      var videoId2 = snapshot.child('1').child('videoId').val();
-      var videoId3 = snapshot.child('2').child('videoId').val();
-
-      console.log('click');
-      var sendTo = $('#email').val().trim();
-      console.log(sendTo);
-      emailjs.send('default_service', 'send_playlist', {
-        'to_email': sendTo,
-        'src1': src1,
-        'src2': src2,
-        'src3': src3
-      }).then(
-       function(response) {
-         console.log("SUCCESS", response);
-       },
-       function(error) {
-         console.log("FAILED", error);
-       }
-       );
-    })
+    });
+    
+//Submit playlist
+  $('#submit').on('click', function() {
+    playlistName = $('#playlistName').val().trim();
+    updateFirebase();
   })
 
 
-})
+
+
+
+
+
+//fn()'s: 
+  function updateFirebase(){
+    firebase.database().ref('/playlists/'+playlistName+'/'+/*selectedVideoCounter*/).update({
+      videoId: selectedVideoId,
+      defaultImg: selectedVideoImg
+    });    
+  }
+
+  //Send Email 
+    $('#send').click(function() {
+      firebase.database().ref('/playlists/'+playlistName)
+      .once('value').then(function(snapshot) {
+        var src1 = snapshot.child('0').child('defaultImg').val();
+        var src2 = snapshot.child('1').child('defaultImg').val();
+        var src3 = snapshot.child('2').child('defaultImg').val();
+
+        var videoId1 = snapshot.child('0').child('videoId').val();
+        var videoId2 = snapshot.child('1').child('videoId').val();
+        var videoId3 = snapshot.child('2').child('videoId').val();
+
+        console.log('click');
+        var sendTo = $('#email').val().trim();
+        console.log(sendTo);
+        emailjs.send('default_service', 'send_playlist', {
+          'to_email': sendTo,
+          'src1': src1,
+          'src2': src2,
+          'src3': src3
+        }).then(
+         function(response) {
+           console.log("SUCCESS", response);
+         },
+         function(error) {
+           console.log("FAILED", error);
+         }
+         );
+      })
+    })
+
+
+});

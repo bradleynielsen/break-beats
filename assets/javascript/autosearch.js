@@ -26,9 +26,11 @@ $(document).ready(function() {
 
 
 	function listBreaks() {
+		
 		var breaksListRef = firebase.database().ref('playlists');
 		breaksListRef.on('child_added', function(snapshot){
-			console.log('Break: ' + snapshot.val());
+		
+		console.log('Break: ' + snapshot.val());
 		})
 	}
 	listBreaks();

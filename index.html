@@ -2,60 +2,209 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>break/beats</title>
-    <link rel="stylesheet" href="assets/css/reset.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Materialize Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <!-- materialize icons -->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Local css -->
+    <link rel="stylesheet" href="assets/style/style.css">
+    <!-- Firebase Link -->
+    <script src="https://www.gstatic.com/firebasejs/3.3.2/firebase.js"></script>
+    <title>Break/Beats</title>
+  </head>
+  <body>
 
-
-</head>
-
-<body><div class="main">
-    <div class="Selected-list"></div>
-    <form id="submit-playlist">
-      <!-- Label for Text Box -->
-      <label for="playlist-name">Playlist Name</label>
-
-      <!-- Text Input Box -->
-      <input type="text" class="playlist-name" placeholder="Playlist name"> &nbsp; 
-      
-      <br>
-      <!-- Label for Text Box -->
-      <label for="email">Email</label>
-      
-
-      <br>
-      <!-- Text Input Box -->
-      <input type="text" class="email" placeholder="Email address"> &nbsp; 
-
-      <!-- Submit Button -->
-      <input class="save-playlist" type="submit" value="Send!">
-
-    </form>
-
-    <hr>
-    <div class="show-videos"></div>
-
-    <div class="main">
-      <form id="search-form">
-        <!-- Label for Text Box -->
-        <label for="search-input">Search</label>
-
-        <!-- Text Input Box -->
-        <input type="text" id="search-input" value="cherry oh baby"> &nbsp; 
-
-        <!-- Submit Button -->
-        <input id="submit" type="submit" value="GO!">
-        </form>
-      <div id="demo"></div>
-      <div id="player"></div>
+    <div class="landing-page">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo.png" alt="Break/Beats" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3 call-to-action">
+            <h1>//take a break</h1>
+            <h1>//send a break</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <input id="js-landing-search" placeholder="find a playlist..."></input>
+          </div>
+        </div>
+        <div class="row">
+          <div class="or-statement col s4 offset-s4">
+            <div class="line-emphasis col s3"></div>
+            <h2>or</h2>
+            <div class="line-emphasis left-line col s3"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4 offset-s4">
+            <div id="js-create-playlist">
+              <a class="waves-effect waves-light btn" href="#"><h2>make your own</h2></a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <div class="disable search-playlists">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo.png" alt="Break/Beats" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <input type="text" placeholder="find a playlist..." id="js-playlist-search"></input>
+            <a class="waves-effect btn" id="js-playlist-search-button">search</a>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="playlist-results col s12">
+            </div>
+            <!-- <div class="playlist-display col s4">
+              <div class="content-wrapper">
+                <h3>Cool Cats</h3>
+                <ul>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>hipster kitten loves bowties</p>
+                  </li>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>pLeAsE loooovvvee me</p>
+                  </li>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>THE kitten kermit talk show</p></li>
+                </ul>
+                <div class="disable playlist-hover col s12">
+                  <h4>This playlist is...</h4>
+                  <h5>Tag tags tags tags</h5>
+                  <button type="button" id="js-view-playlist">view</button>
+                </div>
+              </div>
+            </div> -->
+            <!-- <div class="playlist-display col s4"> -->
+              <!-- <div class="content-wrapper">
+                <h3>Cool Cats</h3>
+                <ul>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>hipster kitten loves bowties</p>
+                  </li>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>pLeAsE loooovvvee me</p>
+                  </li>
+                  <li>
+                    <img src="#" alt="video1" />
+                    <p>THE kitten kermit talk show</p></li>
+                </ul>
+                <div class="playlist-hover col s12">
+                  <div class="">
+                    <h4>This playlist is...</h4>
+                    <div class="chip">
+                      funny
+                    </div>
+                    <div class="chip">
+                      kitten
+                    </div>
+                  </div>
+                  <a class="waves-effect btn" id="js-view-playlist">view</a>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disable search-yt">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo.png" alt="Break/Beats" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <input type="text" placeholder="find a video..." id="js-yt-search"></input>
+            <a class="waves-effect btn" id="js-yt-search-button">search</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="yt-results col s9">
+          </div>
+          <div class="selected-videos col s3">
+            <h3>Selected</h3>
+            <ul id="js-selected-list">
+            </ul>
+            <a class="waves-effect btn" id="js-view-new-playlist">view</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disable playlist-review-send">
+      <div class="container">
+        <div id="close-review-send">
+          <a href="#"><i class="close material-icons" id="js-close-send-review">close</i></a>
+        </div>
+        <div class="row">
+          <div class="col s9">
+            <div class="enter-info col s6">
+              <input type="text" placeholder="name your playlist..." id="js-playlist-name"></input>
+            </div>
+            <div class="enter-info col s6">
+              <input type="text" placeholder="email address..." id="js-email-address"></input>
+            </div>
+          </div>
+          <div class="col s3">
+            <div class="send-column col s10">
+              <div id="js-send-email">
+                <a class="waves-effect waves-light btn" href="#" ><h2>send</h2></a>
+              </div>
+              <a href="#">
+                save without sending
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s9">
+            <div class="col s6 playlist-display">
+              <ul id="js-video-list">
+              </ul>
+            </div>
+            <div class="col s6">
+              <input type="text" placeholder="add tags..." id="js-add-tags"></input>
+              <button type="button" id="js-add-tag-button">add</button>
+              <div id="js-user-tags">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- javascript/jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.3.2/firebase.js"></script>
+    <!-- materialize compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <!-- EmailJS -->
     <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script type="text/javascript" src="assets/javascript/app.js"></script>
-    <script type="text/javascript" src="assets/javascript/email-script.js"></script>
+    <!-- Local JS -->
+    <script type="text/javascript" src="assets/javascript/app.js">
+
+    </script>
+
   </body>
 </html>

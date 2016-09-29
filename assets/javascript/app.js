@@ -40,12 +40,14 @@ var BB = (function() {
       $ytSearchInput = $('#js-yt-search'),
 			$viewNewPlaylist = $('#js-view-new-playlist'),
       $saveButton = $('.save-playlist'),
+			$emailAddress = $('#js-email-address'),
 			$sendButton = $('#js-send-email'),
       $playlistTitle = $('#js-playlist-name'),
 			$playlistVideoContainer = $('#js-video-list'),
 			$newTags = $('#js-user-tags'),
 			$addTag = $('#js-add-tag-button'),
 			$removeTag = $('.chip'),
+			$displayError = $('#js-error-message'),
 			$close = $('#js-close-send-review'),
 			$magenta = '#AB537F',
       query,
@@ -56,8 +58,7 @@ var BB = (function() {
 			userTags = [],
       checkedBoxes,
       maxResults = 10,
-			videoCounter = 0,
-			playlistCounter =0,
+			playlistCounter = 0,
       paginationData;
 
 	// render DOM
@@ -65,6 +66,7 @@ var BB = (function() {
 	    $videosContainer.append(video);
 	  }
 	  function renderSelectedTitles(titles) {
+			$viewNewPlaylist.removeClass('disabled')
 	    $listContainer.html('');
 	    for(var i = 0; i < titles.length; i++) {
 	      $listContainer.append('<li class="remove-video">'+ titles[i].title +'&nbsp<i class="tiny close material-icons">close</i><li>');
@@ -93,6 +95,8 @@ var BB = (function() {
 	function hideLanding(pageToShow) {
 		$('.landing-page').addClass('disable');
 		$(pageToShow).removeClass('disable');
+		$ytSearchInput.select();
+		$playlistSearch.select();
 	}
 		function reviewAndSend() {
 			$('.search-yt').addClass('opacity');
@@ -136,6 +140,7 @@ var BB = (function() {
 			hideLanding('.search-playlists');
 		});
 		$viewNewPlaylist.on('click', function() {
+			$(document).scrollTop(0);
 			reviewAndSend();
 			renderNewPlaylist();
 		});
@@ -147,6 +152,14 @@ var BB = (function() {
 		$('.playlist-results').on('mouseenter', '.playlist-display', playlistHover);
 		$('.playlist-results').on('mouseleave', '.playlist-display', function() {
 			$('.playlist-hover').remove();
+		})
+		$('#js-view-search').on('click', function() {
+			$('.search-yt').addClass('disable').removeClass('opacity');
+			$('.search-playlists').removeClass('disable');
+		})
+		$('#js-view-create').on('click', function() {
+			$('.search-playlists').addClass('disable');
+			$('.search-yt').removeClass('disable');
 		})
 
 
@@ -228,13 +241,16 @@ var BB = (function() {
 			}
 			$('.radio').prop('checked', false);
 			$('.radio').prop('disabled', false);
+			if(titles.length < 1) {
+				$viewNewPlaylist.addClass('disabled');
+			}
 			console.log(titles);
 		}
 
 
 		// internal tag search
 		function searchResultsTitle(title) {
-			var newDiv = $('<div class="playlist-display col s4" id="playlist'+playlistCounter+'">');
+			var newDiv = $('<div class="playlist-display col s5 l3" id="playlist'+playlistCounter+'">');
 			var h3 = $("<h3>"+title+"</h3>");
 			$('.playlist-results').append(newDiv);
 			$(newDiv).append(h3);
@@ -244,12 +260,11 @@ var BB = (function() {
 		function searchResultsList(image, title) {
 			var $li = $('<li>');
 			var $wrapperDiv = $('<div class="col s12"></div>');
-			$wrapperDiv.append('<img class="col s6" src='+image+' />');
+			$wrapperDiv.append('<img class="col s6 responsive-img" src='+image+' />');
 			$wrapperDiv.append('<p class="flow-text col s6">'+title+'</p>');
 			$li.append($wrapperDiv);
-			$('#playlist'+playlistCounter).children("ul").append($li);
+			$('#playlist'+playlistCounter+'> ul').append($li);
 			$('.playlist-display').css('border', 'solid 1px '+$magenta);
-
 		}
 
 
@@ -331,35 +346,44 @@ var BB = (function() {
    * firebase integration
    * ---------------------------------------- */
 
-
   function getPlaylistTitle() {
     var playlistTitle = $playlistTitle.val().trim();
+		console.log(playlistTitle);
     var tags = userTags;
 
-    var newPlaylist = playlistsRef.push().key;
-    playlistsRef.child('/'+newPlaylist+'/').update(
-      {
-        'vtitle': playlistTitle,
-        'vtags': tags
-      });
+		$displayError.empty();
+		if(playlistTitle == "") {
+			$displayError.append('<h5><em>Oops! Your playlist needs a title.</em></h5>');
+			return false;
+		} else if (tags.length < 1) {
+			$displayError.append('<h5><em>Oops! Please add at least one tag to your playlist.</em></h5>');
+			return false;
+		} else {
+			var newPlaylist = playlistsRef.push().key;
+	    playlistsRef.child('/'+newPlaylist+'/').update(
+	      {
+	        'vtitle': playlistTitle,
+	        'vtags': tags
+	      });
 
-    for(i = 0; i < titles.length; i++) {
-      saveToFirebase(newPlaylist, titles[i]);
-    }
+	    for(i = 0; i < titles.length; i++) {
+	      saveToFirebase(newPlaylist, titles[i]);
+	    }
 
-    // var emailAddress = $emailAddress.val().trim();
-    // sendEmail(emailAddress, newPlaylist);
-
-
-    // global tag array
-    // for(i = 0; i < tags.length; i++) {
-    //   tagsRef.child('/'+tags[i]+'/').set({
-    //     'tags': 'tag'
-    //   });
-    // }
+	    var emailAddress = $emailAddress.val().trim();
+	    sendEmail(emailAddress, newPlaylist);
 
 
-    return false;
+	    // global tag array
+	    // for(i = 0; i < tags.length; i++) {
+	    //   tagsRef.child('/'+tags[i]+'/').set({
+	    //     'tags': 'tag'
+	    //   });
+	    // }
+
+
+	    return false;
+		}
   }
 
 	function addTag() {
@@ -384,16 +408,20 @@ var BB = (function() {
   function saveToFirebase(playlistName, video) {
     vid = video.videoId;
     vimg = video.image;
-		vtitle = titles[videoCounter].title
+		vtitle = video.title;
+
     playlistsRef.child(playlistName).child('videos').push({
         videoId: vid,
         defaultImg: vimg,
+				videoTitle: vtitle
     });
   }
 
   console.log(titles);
 
 	function searchTags() {
+		$('.playlist-results').empty();
+		returnedTags = [];
 		playlistsRef.once('value').then(function(snapshot) {
 			var tagSearch = $playlistSearch.val().trim()
 			console.log(tagSearch);
@@ -414,10 +442,71 @@ var BB = (function() {
 						var videoTitle = videos[i].videoTitle;
 						searchResultsList(defaultImg, videoTitle);
 					}
+					playlistCounter++
 				}
 
 			})
 		})
 	}
+
+	/* -------------------------------------------
+   * send email
+   * ---------------------------------------- */
+
+   function sendEmail(emailAddress, newPlaylist) {
+    var sendToAddress = emailAddress;
+    var playlistRef = playlistsRef.child('/'+newPlaylist+'/');
+		var validAddress = /[^@]+@[^@]+/.test(sendToAddress);
+
+		if(!validAddress) {
+			$displayError.append('<h5><em>Oops! That\'s not a valid email address.</em></h5>');
+			return false;
+		} else {
+			playlistRef.on('value', function(snapshot) {
+	      var playlist = snapshot.val();
+
+				var playlistName = playlist.vtitle;
+				var uri = "https://afternoon-falls-60599.herokuapp.com/break/?breakid=" + newPlaylist
+	      var defaultImages = [];
+	      var videos = playlist.videos;
+	      for(video in videos) {
+	        if(videos.hasOwnProperty(video)) {
+	          var vimg = videos[video].defaultImg;
+						defaultImages.push(vimg);
+	        }
+	      }
+
+
+				//  temporarily disabled to avoid using up emails
+		    //  -----------------------------------------------------------
+		     emailjs.send('default_service', 'send_playlist', {
+		       'to_email': sendToAddress,
+		       'src1': defaultImages[0],
+					 'src2': defaultImages[1],
+					 'src3': defaultImages[2],
+		       'uri_link': uri,
+					 'playlist_name': playlistName
+		     }).then(
+		      function(response) {
+		        console.log("SUCCESS", response);
+						$('#js-email-success').removeClass('disable');
+						$('.playlist-review-send').css('opacity', '0.5');
+						setTimeout(function() {
+							titles = [];
+							$('#js-email-success').addClass('disable');
+							$('.playlist-review-send').css('opacity', '1').addClass('disable');
+							$('.search-yt').removeClass('opacity');
+							$('.yt-results, #js-selected-list').empty();
+							$('#js-view-new-playlist').addClass('disabled');
+						}, 5000);
+		      },
+		      function(error) {
+		        console.log("FAILED", error);
+		      })
+
+				})
+		}
+
+  }
 
 })();

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+    <!-- Materialize Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+    <!-- materialize icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Local css -->
+    <link rel="stylesheet" href="assets/style/style.css">
+    <!-- Firebase Link -->
+    <script src="https://www.gstatic.com/firebasejs/3.3.2/firebase.js"></script>
+    <title>breakbeats</title>
+  </head>
+  <body>
+
+    <div class="landing-page">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo-magenta.png" alt="Break/Beats" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3 call-to-action">
+            <h1>//take a break</h1>
+            <h1>//send a break</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <input id="js-landing-search" placeholder="find a playlist..."></input>
+          </div>
+        </div>
+        <div class="row">
+          <div class="or-statement col s4 offset-s4">
+            <div class="line-emphasis col s3"></div>
+            <h2>or</h2>
+            <div class="line-emphasis left-line col s3"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s4 offset-s4">
+            <div id="js-create-playlist">
+              <a class="waves-effect waves-light btn" href="#"><h2>make your own</h2></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disable search-playlists">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo-name-magenta.png" alt="Break/Beats" />
+          </div>
+          <div class="col s4 offset-s4">
+            <a href="#" id="js-view-create" class="top-link"><h1>//create a playlist</h1></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-input col s6 offset-s3">
+            <input type="text" placeholder="find a playlist..." id="js-playlist-search" class="autocomplete"></input>
+            <label for="js-playlist-search"></label>
+            <a class="waves-effect btn" id="js-playlist-search-button">search</a>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="playlist-results col s12"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disable search-yt">
+      <div class="container">
+        <div class="row">
+          <div class="col s4">
+            <img class="logo" src="assets/style/images/logo-name-slate.png" alt="Break/Beats" />
+          </div>
+          <div class="col s4 offset-s4">
+            <a href="#" id="js-view-search" class="top-link"><h1>//search playlists</h1></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6 offset-s3">
+            <input type="text" placeholder="find a video..." id="js-yt-search"></input>
+            <a class="waves-effect btn" id="js-yt-search-button">search</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="yt-results col s9">
+          </div>
+          <div class="selected-videos col s3">
+            <h3>Selected</h3>
+            <ul id="js-selected-list">
+            </ul>
+            <a class="waves-effect btn disabled" id="js-view-new-playlist">view</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="disable playlist-review-send">
+      <div class="container">
+        <div id="close-review-send">
+          <a href="#"><i class="close material-icons" id="js-close-send-review">close</i></a>
+        </div>
+        <div class="row">
+          <div class="col s9">
+            <div class="enter-info col s6">
+              <input type="text" placeholder="name your playlist..." id="js-playlist-name"></input>
+            </div>
+            <div class="enter-info col s6">
+              <input type="text" placeholder="email address..." id="js-email-address"></input>
+            </div>
+          </div>
+          <div class="col s3">
+            <div class="send-column col s10">
+              <div id="js-send-email">
+                <a class="waves-effect waves-light btn" href="#" ><h2>send</h2></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s9">
+            <div class="col s6" id="new-playlist-display">
+              <ul id="js-video-list">
+              </ul>
+            </div>
+            <div class="col s6">
+              <input type="text" placeholder="add tags..." id="js-add-tags"></input>
+              <button type="button" id="js-add-tag-button">add</button>
+              <div id="js-user-tags">
+              </div>
+            </div>
+          </div>
+          <div class="col s3">
+            <div id="js-error-message">
+
+            </div>
+          </div>
+        </div>
+        <div class="disable" id="js-email-success">
+          <div class="round">
+            <i class="large material-icons">done</i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer></footer>
+
+
+
+    <!-- javascript/jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <!-- jquery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <!-- materialize compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <!-- Local JS -->
+    <script type="text/javascript" src="assets/javascript/app.js">
+
+    </script>
+
+  </body>
+</html>
